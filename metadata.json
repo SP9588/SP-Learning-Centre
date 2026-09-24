@@ -1,0 +1,6 @@
+{
+  "name": "SP SOLUTIONS - Learning & Lead Management SaaS",
+  "description": "Bilingual English, Computer & Hindi Bollywood Vocal learning platform with lead management, student portal, and AI tutoring.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
