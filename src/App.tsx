@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { ThreeServices } from './components/ThreeServices';
@@ -313,7 +314,9 @@ export default function App() {
         onClose={() => setActiveLegalDoc(null)}
         language={language}
       />
+
+      {/* Vercel Speed Insights */}
+      <SpeedInsights />
     </div>
   );
 }
-
