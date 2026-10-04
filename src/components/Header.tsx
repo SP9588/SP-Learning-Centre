@@ -15,7 +15,12 @@ import {
   Youtube,
   Instagram,
   Users,
-  Compass
+  Compass,
+  Radar,
+  Video,
+  TrendingUp,
+  Share2,
+  Search
 } from 'lucide-react';
 import { Language, WebsiteSettings } from '../types';
 import { translations } from '../locales/translations';
@@ -29,6 +34,7 @@ interface HeaderProps {
   onOpenDemoBooking: () => void;
   activeView: string;
   setActiveView: (view: string) => void;
+  onOpenShareModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -39,6 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDemoBooking,
   activeView,
   setActiveView,
+  onOpenShareModal
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [visitorTotal, setVisitorTotal] = useState<number>(1420);
@@ -104,6 +111,30 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Socials & Language Switch */}
           <div className="flex items-center gap-2.5">
+            {/* Justdial Link */}
+            <a
+              href={settings.justdialUrl || 'https://www.justdial.com/Baloda-Bazar/SP-Solutions-English-Computer-Singing-Classes-Near-Mobile-Tower-Baloda/07727P7727-7727-261004120000-A1B2_BZDET'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-orange-400 hover:text-orange-300 transition-colors font-semibold"
+              title="SP SOLUTIONS on Justdial"
+            >
+              <span className="px-1.5 py-0.2 rounded bg-orange-500 text-slate-950 font-black text-[10px]">JD</span>
+              <span className="hidden sm:inline text-[11px]">Justdial 4.8★</span>
+            </a>
+
+            {/* Google Search Link */}
+            <a
+              href={settings.googleSearchUrl || 'https://www.google.com/search?q=SP+Solutions+Village+Baloda+Hasuwa+House+359+English+Computer+Singing+Chhattisgarh'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-sky-400 hover:text-sky-300 transition-colors"
+              title="Search SP SOLUTIONS on Google"
+            >
+              <Search className="h-3 w-3 text-sky-400" />
+              <span className="hidden sm:inline text-[11px] font-medium">Google #1</span>
+            </a>
+
             {/* YouTube Link */}
             <a
               href={settings.youtubeUrl || 'https://www.youtube.com/@makemestar'}
@@ -216,6 +247,30 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Classes Near Me</span>
           </button>
           <button
+            onClick={() => handleNavClick('landing', 'location-radar-section')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-emerald-400 hover:text-white hover:bg-slate-900 transition-colors"
+            title="Google Maps Autonomous Radar & Registry"
+          >
+            <Radar className="h-4 w-4 text-emerald-400" />
+            <span>Maps Radar</span>
+          </button>
+          <button
+            onClick={() => handleNavClick('landing', 'online-classes-section')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-red-400 hover:text-white hover:bg-slate-900 transition-colors"
+            title="Live Online Classroom & Lessons"
+          >
+            <Video className="h-4 w-4 text-red-400" />
+            <span>Live Classes</span>
+          </button>
+          <button
+            onClick={() => handleNavClick('landing', 'google-ranking-section')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sky-400 hover:text-white hover:bg-slate-900 transition-colors"
+            title="Google Search Access & Top Ranking"
+          >
+            <TrendingUp className="h-4 w-4 text-sky-400" />
+            <span>Google Rank</span>
+          </button>
+          <button
             onClick={() => handleNavClick('landing', 'courses')}
             className="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-900 transition-colors"
           >
@@ -245,6 +300,16 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action CTAs */}
         <div className="hidden sm:flex items-center gap-2">
+          {onOpenShareModal && (
+            <button
+              onClick={onOpenShareModal}
+              className="rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white transition-all shadow-sm flex items-center gap-1.5"
+              title="Share to LinkedIn, GitHub, OpenAI, Facebook, WhatsApp, Threads, Discord"
+            >
+              <Share2 className="h-3.5 w-3.5 text-amber-400" />
+              <span>Share</span>
+            </button>
+          )}
           <button
             onClick={onOpenDemoBooking}
             className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 transition-all shadow-sm"
@@ -311,6 +376,39 @@ export const Header: React.FC<HeaderProps> = ({
               <Compass className="h-4 w-4 text-blue-400" />
               <span>Classes Near Me</span>
             </button>
+            <button
+              onClick={() => handleNavClick('landing', 'location-radar-section')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-left font-medium text-emerald-300 hover:bg-slate-900"
+            >
+              <Radar className="h-4 w-4 text-emerald-400" />
+              <span>Maps Radar & Buyers Registry</span>
+            </button>
+            <button
+              onClick={() => handleNavClick('landing', 'online-classes-section')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-left font-medium text-red-300 hover:bg-slate-900"
+            >
+              <Video className="h-4 w-4 text-red-400" />
+              <span>Live Online Classes</span>
+            </button>
+            <button
+              onClick={() => handleNavClick('landing', 'google-ranking-section')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-left font-medium text-sky-300 hover:bg-slate-900"
+            >
+              <TrendingUp className="h-4 w-4 text-sky-400" />
+              <span>Google Search & Ranking</span>
+            </button>
+            {onOpenShareModal && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenShareModal();
+                }}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-left font-medium text-amber-300 hover:bg-slate-900"
+              >
+                <Share2 className="h-4 w-4 text-amber-400" />
+                <span>Share App (LinkedIn, Meta, OpenAI)</span>
+              </button>
+            )}
             <button
               onClick={() => handleNavClick('landing', 'courses')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-left font-medium text-slate-200 hover:bg-slate-900"

@@ -3,15 +3,19 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { ThreeServices } from './components/ThreeServices';
 import { NearMeClasses } from './components/NearMeClasses';
+import { OnlineClassesSection } from './components/OnlineClassesSection';
 import { CourseCatalog } from './components/CourseCatalog';
 import { SingingSpecialSection } from './components/SingingSpecialSection';
 import { AiTutorLab } from './components/AiTutorLab';
 import { DemoBookingSection } from './components/DemoBookingSection';
+import { GoogleMapsRadarSection } from './components/GoogleMapsRadarSection';
+import { GoogleRankingSection } from './components/GoogleRankingSection';
 import { LocationSection } from './components/LocationSection';
 import { LeadPopup } from './components/LeadPopup';
 import { StudentPortal } from './components/StudentPortal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { LegalModals, LegalDocType } from './components/LegalModals';
+import { SocialShareModal } from './components/SocialShareModal';
 import { Footer } from './components/Footer';
 
 import {
@@ -43,11 +47,13 @@ export default function App() {
 
   // Popups & Modals State
   const [leadPopupOpen, setLeadPopupOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const [selectedCourseForPopup, setSelectedCourseForPopup] = useState<string | undefined>();
   const [selectedCourseForModal, setSelectedCourseForModal] = useState<Course | null>(null);
   const [activeLegalDoc, setActiveLegalDoc] = useState<LegalDocType | null>(null);
+  const [gmpQuotaExceeded, setGmpQuotaExceeded] = useState(false);
 
-  // Load data on initial mount
+  // Load data on initial mount and listen to GMP quota events
   useEffect(() => {
     const loadedCourses = getCourses();
     const loadedLeads = getLeads();
@@ -66,13 +72,26 @@ export default function App() {
     recordVisitorVisit();
     logAnalyticsEvent('page_view', { view: 'landing' });
 
+    // Quota defense listener
+    const handleQuotaExceeded = () => {
+      setGmpQuotaExceeded(true);
+    };
+    window.addEventListener('gmp-quota-exceeded', handleQuotaExceeded);
+
     // Check if lead popup should be displayed
     if (loadedSettings.popupEnabled && canShowPopup(loadedSettings.popupFrequency)) {
       const timer = setTimeout(() => {
         setLeadPopupOpen(true);
       }, 1500);
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('gmp-quota-exceeded', handleQuotaExceeded);
+      };
     }
+
+    return () => {
+      window.removeEventListener('gmp-quota-exceeded', handleQuotaExceeded);
+    };
   }, []);
 
   const refreshAllData = () => {
@@ -116,6 +135,24 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 font-sans text-slate-100 selection:bg-blue-600 selection:text-white">
+      {/* Google Maps Platform Quota Notice Banner (CF8 Quota Defense) */}
+      {gmpQuotaExceeded && (
+        <div className="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm">
+          <span>
+            Google Maps Platform quota reached. If you are the app owner, visit{' '}
+            <a
+              href="https://developers.google.com/maps/ai/ai-studio?utm_campaign=gmp_mcp_codeassist_v1_aistudio#quota_exceeded_errors"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-semibold text-amber-950 hover:text-amber-800"
+            >
+              maps developer site
+            </a>{' '}
+            for instructions to update your account.
+          </span>
+        </div>
+      )}
+
       {/* Header Navigation */}
       <Header
         language={language}
@@ -123,6 +160,7 @@ export default function App() {
         settings={settings}
         onOpenLeadPopup={() => handleOpenLeadPopup()}
         onOpenDemoBooking={() => handleOpenDemoBooking()}
+        onOpenShareModal={() => setShareModalOpen(true)}
         activeView={activeView}
         setActiveView={setActiveView as any}
       />
@@ -148,12 +186,30 @@ export default function App() {
               onOpenDemoBooking={handleOpenDemoBooking}
             />
 
+            {/* Google Search Access & Ranking Simulator */}
+            <GoogleRankingSection
+              language={language}
+              onOpenShareModal={() => setShareModalOpen(true)}
+            />
+
+            {/* Live Online Classes & Interactive Lessons Portal */}
+            <OnlineClassesSection
+              language={language}
+              onOpenLeadPopup={() => handleOpenLeadPopup()}
+            />
+
             {/* Three Main Services Highlight */}
             <ThreeServices
               language={language}
               courses={courses}
               onSelectCourse={setSelectedCourseForModal}
               onEnquireCourse={handleOpenLeadPopup}
+            />
+
+            {/* Google Maps Autonomous Radar & Buyers/Receivers Registry */}
+            <GoogleMapsRadarSection
+              language={language}
+              onOpenLeadPopup={() => handleOpenLeadPopup()}
             />
 
             {/* Course Catalog & Fees */}
@@ -244,6 +300,13 @@ export default function App() {
         campaign={settings.activeCampaign}
       />
 
+      {/* Global Social Share Modal (LinkedIn, GitHub, OpenAI, Facebook, WhatsApp, Threads, Discord) */}
+      <SocialShareModal
+        isOpen={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        language={language}
+      />
+
       {/* Legal Modals (Privacy, Terms, Refund, AI Disclaimer, Copyright) */}
       <LegalModals
         docType={activeLegalDoc}
@@ -253,3 +316,4 @@ export default function App() {
     </div>
   );
 }
+

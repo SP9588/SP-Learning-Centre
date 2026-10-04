@@ -169,6 +169,27 @@ export const Footer: React.FC<FooterProps> = ({
               </a>
 
               <a
+                href={settings.justdialUrl || 'https://www.justdial.com/Baloda-Bazar/SP-Solutions-English-Computer-Singing-Classes-Near-Mobile-Tower-Baloda/07727P7727-7727-261004120000-A1B2_BZDET'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 rounded-lg border border-orange-500/40 bg-orange-950/30 px-3 py-1.5 text-xs text-orange-300 hover:border-orange-500 hover:text-white transition-colors"
+                title="SP SOLUTIONS on Justdial"
+              >
+                <span className="px-1 rounded bg-orange-500 text-slate-950 font-black text-[9px]">JD</span>
+                <span>Justdial Verified</span>
+              </a>
+
+              <a
+                href={settings.googleSearchUrl || 'https://www.google.com/search?q=SP+Solutions+Village+Baloda+Hasuwa+House+359+English+Computer+Singing+Chhattisgarh'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 rounded-lg border border-blue-500/40 bg-blue-950/30 px-3 py-1.5 text-xs text-blue-300 hover:border-blue-500 hover:text-white transition-colors"
+                title="Search SP SOLUTIONS on Google"
+              >
+                <span>Google Search #1</span>
+              </a>
+
+              <a
                 href={`mailto:${settings.email || 'santoshprasad8891@gmail.com'}`}
                 className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs text-slate-300 hover:border-blue-500/40 hover:text-white transition-colors"
                 title="Email Support"
@@ -267,6 +288,45 @@ export const Footer: React.FC<FooterProps> = ({
           <div className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white">Portals & Tools</h4>
             <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  onClick={() => {
+                    onNavigateView('landing');
+                    setTimeout(() => {
+                      document.getElementById('location-radar-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 50);
+                  }}
+                  className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
+                >
+                  <span>Google Maps Radar & Registry</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    onNavigateView('landing');
+                    setTimeout(() => {
+                      document.getElementById('online-classes-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 50);
+                  }}
+                  className="flex items-center gap-1.5 text-red-400 hover:text-red-300 transition-colors"
+                >
+                  <span>Live Online Classes & Lessons</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    onNavigateView('landing');
+                    setTimeout(() => {
+                      document.getElementById('google-ranking-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 50);
+                  }}
+                  className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors"
+                >
+                  <span>Google Search Ranking #1</span>
+                </button>
+              </li>
               <li>
                 <button
                   onClick={() => onNavigateView('student')}

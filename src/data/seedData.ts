@@ -530,6 +530,8 @@ export const initialSettings: WebsiteSettings = {
   facebookUrl: 'https://www.facebook.com/santymanikpuri',
   linkedinUrl: 'https://www.linkedin.com/in/santymanikpuri',
   googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Village+Baloda+Hasuwa+House+359+Chhattisgarh',
+  justdialUrl: 'https://www.justdial.com/Baloda-Bazar/SP-Solutions-English-Computer-Singing-Classes-Near-Mobile-Tower-Baloda/07727P7727-7727-261004120000-A1B2_BZDET',
+  googleSearchUrl: 'https://www.google.com/search?q=SP+Solutions+Village+Baloda+Hasuwa+House+359+English+Computer+Singing+Chhattisgarh',
   officialGbpStatus: 'CONFIGURED_PENDING_CLAIM',
   gbpVerificationNotes:
     'SP SOLUTIONS address is configured with Schema.org LocalBusiness metadata. When official Google Business Profile is verified by postal postcard / video in Baloda, insert the Google Place ID or Business CID URL in this field.',

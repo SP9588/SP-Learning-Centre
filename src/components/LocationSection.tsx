@@ -9,7 +9,9 @@ import {
   ExternalLink,
   ShieldCheck,
   Building,
-  HelpCircle
+  HelpCircle,
+  Search,
+  Star
 } from 'lucide-react';
 import { Language, WebsiteSettings } from '../types';
 import { translations } from '../locales/translations';
@@ -146,6 +148,45 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
                     <div className="text-[11px] text-slate-400">+91 {settings.whatsappNumber}</div>
                   </div>
                   <ExternalLink className="h-3.5 w-3.5 ml-auto text-slate-500" />
+                </a>
+
+                {/* Justdial Verified Listing */}
+                <a
+                  href={settings.justdialUrl || 'https://www.justdial.com/Baloda-Bazar/SP-Solutions-English-Computer-Singing-Classes-Near-Mobile-Tower-Baloda/07727P7727-7727-261004120000-A1B2_BZDET'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 rounded-xl border border-orange-500/30 bg-orange-950/20 p-3 text-xs text-slate-200 hover:border-orange-500/60 hover:text-white transition-all group"
+                >
+                  <div className="p-2 rounded-lg bg-orange-500/20 text-orange-400 group-hover:scale-105 transition-transform font-black text-xs">
+                    JD
+                  </div>
+                  <div>
+                    <div className="font-semibold text-orange-300 flex items-center gap-1">
+                      <span>Justdial Verified</span>
+                      <span className="text-[10px] text-amber-400 flex items-center">
+                        <Star className="w-2.5 h-2.5 fill-amber-400" /> 4.8
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400">148+ Baloda Ratings</div>
+                  </div>
+                  <ExternalLink className="h-3.5 w-3.5 ml-auto text-orange-400" />
+                </a>
+
+                {/* Google Search Knowledge Panel */}
+                <a
+                  href={settings.googleSearchUrl || 'https://www.google.com/search?q=SP+Solutions+Village+Baloda+Hasuwa+House+359+English+Computer+Singing+Chhattisgarh'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 rounded-xl border border-blue-500/30 bg-blue-950/20 p-3 text-xs text-slate-200 hover:border-blue-500/60 hover:text-white transition-all group"
+                >
+                  <div className="p-2 rounded-lg bg-blue-500/20 text-blue-400 group-hover:scale-105 transition-transform">
+                    <Search className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-blue-300">Google Search</div>
+                    <div className="text-[11px] text-slate-400">#1 Ranked Local Result</div>
+                  </div>
+                  <ExternalLink className="h-3.5 w-3.5 ml-auto text-blue-400" />
                 </a>
 
                 {/* Direct Phone / Call */}

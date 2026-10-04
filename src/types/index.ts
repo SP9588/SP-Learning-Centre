@@ -230,6 +230,8 @@ export interface WebsiteSettings {
   facebookUrl: string;
   linkedinUrl: string;
   googleMapsUrl: string;
+  justdialUrl: string;
+  googleSearchUrl: string;
   officialGbpStatus: string;
   gbpVerificationNotes: string;
   popupEnabled: boolean;
@@ -259,9 +261,60 @@ export interface AnalyticsEvent {
     | 'payment_completed'
     | 'whatsapp_click'
     | 'call_click'
-    | 'directions_click';
+    | 'directions_click'
+    | 'social_share'
+    | 'online_class_join'
+    | 'location_radar_scan';
   timestamp: string;
   details?: string;
   courseId?: string;
   city?: string;
 }
+
+export type EntityCategory =
+  | 'STUDENT_BUYER'
+  | 'CORPORATE_RECEIVER'
+  | 'BUSINESS_IT_COMMERCE'
+  | 'VOCAL_MUSIC_STUDIO'
+  | 'ONLINE_INDIVIDUAL'
+  | 'COACHING_PARTNER';
+
+export interface RegisteredEntity {
+  id: string;
+  entityId: string;
+  name: string;
+  contactPerson?: string;
+  phone: string;
+  email?: string;
+  category: EntityCategory;
+  categoryLabel: string;
+  locationName: string;
+  district: string;
+  state: string;
+  latitude: number;
+  longitude: number;
+  distanceKm: number;
+  isOnline: boolean;
+  status: 'DISCOVERED' | 'VERIFIED' | 'REGISTERED' | 'ENGAGED' | 'STUDENT_ENROLLED';
+  needsOrOffering: string;
+  notes?: string;
+  registeredAt: string;
+  lastActive: string;
+  preferredMode: 'ONLINE' | 'OFFLINE' | 'HYBRID';
+}
+
+export interface OnlineClassSession {
+  id: string;
+  title: string;
+  titleHi: string;
+  subject: CourseCategory;
+  scheduledTime: string;
+  durationMinutes: number;
+  instructor: string;
+  joinLink: string;
+  platform: 'Google Meet' | 'Zoom' | 'Live Web';
+  attendeesCount: number;
+  status: 'LIVE_NOW' | 'UPCOMING' | 'RECORDED';
+  keyTopics: string[];
+}
+

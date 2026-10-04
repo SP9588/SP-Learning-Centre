@@ -24,7 +24,10 @@ import {
   Save,
   Plus,
   RefreshCw,
-  Eye
+  Eye,
+  Radar,
+  Wifi,
+  Building2
 } from 'lucide-react';
 import {
   Lead,
@@ -34,7 +37,8 @@ import {
   Student,
   WebsiteSettings,
   Language,
-  LeadStatus
+  LeadStatus,
+  RegisteredEntity
 } from '../types';
 import {
   updateLeadStatus,
@@ -48,6 +52,12 @@ import {
   getLiveActiveVisitors,
   resetToFreshScratchData
 } from '../data/store';
+import {
+  getRegisteredEntities,
+  runAutonomousRadarDiscovery,
+  exportRegistryToCsv,
+  SP_SOLUTIONS_HQ
+} from '../data/locationRadarStore';
 import { translations } from '../locales/translations';
 
 interface AdminDashboardProps {
@@ -80,8 +90,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const t = translations[language];
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'leads' | 'demos' | 'courses' | 'batches' | 'settings' | 'sql'
+    'overview' | 'leads' | 'demos' | 'courses' | 'batches' | 'radar' | 'settings' | 'sql'
   >('overview');
+
+  // Maps Radar & Buyers Registry state
+  const [radarEntities, setRadarEntities] = useState<RegisteredEntity[]>(() => getRegisteredEntities());
+  const [radarScanning, setRadarScanning] = useState(false);
+  const [radarScanNote, setRadarScanNote] = useState('');
 
   // Leads filter & search
   const [leadSearch, setLeadSearch] = useState('');
@@ -228,6 +243,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             { id: 'demos', label: `Demo Bookings (${demoBookings.length})`, icon: Calendar },
             { id: 'courses', label: `Courses & Fees (${courses.length})`, icon: BookOpen },
             { id: 'batches', label: `Batches (${batches.length})`, icon: Clock },
+            { id: 'radar', label: `Maps Radar & Registry (${radarEntities.length})`, icon: Radar },
             { id: 'settings', label: 'Platform & GBP Settings', icon: Settings },
             { id: 'sql', label: 'SQL Migration Schema', icon: Database },
           ].map(tab => {
@@ -1010,6 +1026,41 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </span>
               </div>
 
+              {/* Justdial & Google Search Directory Linking */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Justdial Official Profile URL
+                  </label>
+                  <input
+                    type="text"
+                    value={localSettings.justdialUrl || ''}
+                    onChange={e => setLocalSettings({ ...localSettings, justdialUrl: e.target.value })}
+                    placeholder="https://www.justdial.com/Baloda-Bazar/SP-Solutions-..."
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs text-white font-mono"
+                  />
+                  <span className="text-[11px] text-slate-400 mt-1 block">
+                    Direct link to SP SOLUTIONS on Justdial Baloda Bazar.
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Google Search Query & Knowledge Link
+                  </label>
+                  <input
+                    type="text"
+                    value={localSettings.googleSearchUrl || ''}
+                    onChange={e => setLocalSettings({ ...localSettings, googleSearchUrl: e.target.value })}
+                    placeholder="https://www.google.com/search?q=SP+Solutions+Baloda..."
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs text-white font-mono"
+                  />
+                  <span className="text-[11px] text-slate-400 mt-1 block">
+                    Google Knowledge Graph and top ranking search query URL.
+                  </span>
+                </div>
+              </div>
+
               {/* Lead Popup Behaviour */}
               <div className="border-t border-slate-800 pt-5">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
@@ -1074,6 +1125,165 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 Save Settings
               </button>
             </form>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB: GOOGLE MAPS RADAR & BUYERS/RECEIVERS REGISTRY */}
+        {/* ============================================================== */}
+        {activeTab === 'radar' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+              <div>
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Radar className="h-5 w-5 text-emerald-400" />
+                  <span>Google Maps Autonomous Radar & Category Registry</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Autonomous iterations around SP SOLUTIONS (House No. 359, Baloda) registering buyers, hiring institutions & online learners.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setRadarScanning(true);
+                    setRadarScanNote('Autonomous radar navigation in progress across Baloda Bazar radius...');
+                    setTimeout(() => {
+                      const res = runAutonomousRadarDiscovery(50);
+                      setRadarEntities([...res.updated]);
+                      setRadarScanning(false);
+                      setRadarScanNote(`Autonomous scan complete! ${res.newCount} new entities registered.`);
+                      setTimeout(() => setRadarScanNote(''), 4000);
+                    }, 1500);
+                  }}
+                  disabled={radarScanning}
+                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2 text-xs font-bold text-slate-950 hover:from-amber-400 hover:to-amber-500 shadow disabled:opacity-50 cursor-pointer"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 ${radarScanning ? 'animate-spin' : ''}`} />
+                  <span>{radarScanning ? 'Scanning Radius...' : 'Run Autonomous Scan'}</span>
+                </button>
+
+                <button
+                  onClick={() => exportRegistryToCsv(radarEntities)}
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3.5 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-700 cursor-pointer"
+                >
+                  <Download className="h-3.5 w-3.5 text-sky-400" />
+                  <span>Export Registry (CSV)</span>
+                </button>
+              </div>
+            </div>
+
+            {radarScanNote && (
+              <div className="p-3 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                <span>{radarScanNote}</span>
+              </div>
+            )}
+
+            {/* Registry KPI Summary */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+                <p className="text-xs text-slate-400">Total Registered</p>
+                <p className="text-xl font-bold text-white mt-1">{radarEntities.length}</p>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+                <p className="text-xs text-slate-400">Active Online Now</p>
+                <p className="text-xl font-bold text-emerald-400 mt-1">
+                  {radarEntities.filter(e => e.isOnline).length}
+                </p>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+                <p className="text-xs text-slate-400">Student Buyers</p>
+                <p className="text-xl font-bold text-amber-400 mt-1">
+                  {radarEntities.filter(e => e.category === 'STUDENT_BUYER' || e.category === 'ONLINE_INDIVIDUAL').length}
+                </p>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+                <p className="text-xs text-slate-400">Business & Receivers</p>
+                <p className="text-xl font-bold text-sky-400 mt-1">
+                  {radarEntities.filter(e => e.category === 'BUSINESS_IT_COMMERCE' || e.category === 'CORPORATE_RECEIVER').length}
+                </p>
+              </div>
+            </div>
+
+            {/* Registered Entities Table */}
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300">
+                  <thead className="bg-slate-950/80 text-slate-400 uppercase font-semibold text-[11px] border-b border-slate-800">
+                    <tr>
+                      <th className="px-4 py-3">Entity ID</th>
+                      <th className="px-4 py-3">Name & Contact</th>
+                      <th className="px-4 py-3">Category</th>
+                      <th className="px-4 py-3">Location & Distance</th>
+                      <th className="px-4 py-3">Online Status</th>
+                      <th className="px-4 py-3">Needs / Offering</th>
+                      <th className="px-4 py-3 text-right">Direct Connect</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800">
+                    {radarEntities.map(ent => (
+                      <tr key={ent.id} className="hover:bg-slate-800/40 transition">
+                        <td className="px-4 py-3 font-mono text-[11px] text-amber-400 font-semibold">
+                          {ent.entityId}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="font-bold text-white">{ent.name}</div>
+                          <div className="text-[11px] text-slate-400">
+                            {ent.contactPerson ? `${ent.contactPerson} • ` : ''}{ent.phone}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                            {ent.categoryLabel}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="text-slate-200">{ent.locationName}</div>
+                          <div className="text-[11px] text-amber-400 font-medium">{ent.distanceKm} km from House 359</div>
+                        </td>
+                        <td className="px-4 py-3">
+                          {ent.isOnline ? (
+                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/40">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                              ONLINE
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px]">
+                              OFFLINE
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 max-w-[220px] truncate text-slate-300" title={ent.needsOrOffering}>
+                          {ent.needsOrOffering}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <div className="inline-flex items-center gap-1.5">
+                            <a
+                              href={`tel:${ent.phone}`}
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200"
+                              title="Call"
+                            >
+                              <Phone className="h-3.5 w-3.5 text-emerald-400" />
+                            </a>
+                            <a
+                              href={`https://wa.me/91${ent.phone}?text=Hello%20${encodeURIComponent(ent.name)}%2C%20connecting%20from%20SP%20SOLUTIONS%20(House%20359%20Baloda).`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white"
+                              title="WhatsApp"
+                            >
+                              <MessageSquare className="h-3.5 w-3.5" />
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 
